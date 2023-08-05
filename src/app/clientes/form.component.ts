@@ -8,11 +8,13 @@ import Swal from "sweetalert2";
   selector: 'app-form',
   templateUrl: './form.component.html'
 })
+
 export class FormComponent implements OnInit {
 
   public cliente: Cliente = new Cliente();
   public titulo: string = "Nuevo registro";
   public clientes: Cliente[] = [];
+  public errores: string[] = [];
 
   constructor(private clienteService: ClienteService,
     private router: Router,
@@ -22,12 +24,22 @@ export class FormComponent implements OnInit {
     this.getCliente();
   }
 
+  getErrorSize(): boolean {
+    if(this.errores.length == 0 || this.errores.length == null || this.errores.length < 0){
+      return false;
+    }
+    return true;
+  }
+
   create(): void {
     console.log(this.cliente);
     this.clienteService.create(this.cliente).subscribe(
-      response => {
+      json => {
         this.router.navigate(['/clientes'])
-        Swal.fire('Nuevo registro', `Cliente ${this.cliente.nombre} creado con éxito!`,'success')
+        Swal.fire('Nuevo registro', `${json.mensaje}: ${json.cliente.nombre}`,'success')
+      },
+      err => {
+        this.errores = err.error.errors
       }
     )
   }
@@ -43,9 +55,9 @@ export class FormComponent implements OnInit {
 
   update(): void {
     this.clienteService.update(this.cliente).subscribe(
-      cliente => {
+      json => {
         this.router.navigate(['/clientes'])
-        Swal.fire('Registro actualizado', `Cliente ${this.cliente.nombre} actualizado con éxito!`,'success')
+        Swal.fire('Registro actualizado', `${json.mensaje}: ${json.cliente.nombre}`,'success')
       }
     )
   }

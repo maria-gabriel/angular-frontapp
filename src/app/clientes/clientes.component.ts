@@ -10,7 +10,7 @@ import Swal from 'sweetalert2';
 })
 export class ClientesComponent implements OnInit {
 
-  public clientes!: Cliente[];
+  public clientes: Cliente[] = [];
 
   constructor(private clienteService: ClienteService){ }
 
@@ -19,6 +19,13 @@ export class ClientesComponent implements OnInit {
       clientes => this.clientes = clientes
     );
 
+  }
+
+  getClienteSize(): boolean {
+    if(this.clientes.length == 0 || this.clientes.length == null || this.clientes.length < 0){
+      return false;
+    }
+    return true;
   }
 
   delete(cliente: Cliente): void {
